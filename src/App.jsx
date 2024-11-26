@@ -1,10 +1,53 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useEffect, useState } from "react";
+import reactLogo from "./assets/react.svg";
+import viteLogo from "/vite.svg";
+import "./App.css";
+
+// Lifecycle Components
+// componentDidMount() - loads when the website initially loads.
+// componentDidUpdate() - loads when there is a change in the state value.
+// componentWillUnmount() - loads when the component is about to be collapsed.
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [count, setCount] = useState(0);
+  const [randomWord, setWord] = useState("abc");
+  const [pokemonName, setPokemonName] = useState("");
+  const [pokemonImage, setPokemonImage] = useState("");
+
+  const getPokemonData = async () => {
+    // let result = await fetch(`https://pokeapi.co/api/v2/pokemon/${Math.ceil(Math.random() * 1025)}`);
+    // let data = await result.json();
+    // but shorter way is:
+    let response = await fetch(
+      `https://pokeapi.co/api/v2/pokemon/${Math.ceil(Math.random() * 1025)}`
+    ).then((response) => response.json());
+
+    setPokemonName(response.name);
+    setPokemonImage(response.sprites.front_default);
+  };
+
+  // Works like componentDidMount()
+  // useEffect(callback, dependencyArray)
+  // dependencyArray - whenever something changes here, the useEffect hook runs
+  useEffect(() => {
+    // some other operations
+    console.log("Component Mounted");
+
+    getPokemonData();
+
+    return () => {
+      console.log("Component will unmount now.");
+    };
+  }, []);
+
+  // Works like componentDidMount() once, then componentDidUpdate() every time the value in dependencyArray changes
+  useEffect(() => {
+    console.log(`Count is now ${count}`);
+  }, [count, randomWord]);
+
+  useEffect(() => {
+    console.log(`Pokemon Data retrieved. Name: ${pokemonName}, Image: ${pokemonImage}`);
+  }, [pokemonName, pokemonImage]);
 
   return (
     <>
@@ -29,7 +72,7 @@ function App() {
         Click on the Vite and React logos to learn more
       </p>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
